@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp /tmp/rick_publish/获取Rick课件.exe /Volumes/NAS/获取Rick课件.exe && echo \"Done\")",
+      "Bash(cd /Users/fuzihao/Desktop/Get-Rick-courseware/git/Get-Rick-courseware && dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o /tmp/rick_publish 2>&1 && cp /tmp/rick_publish/获取Rick课件.exe /Volumes/NAS/获取Rick课件.exe && echo \"Done\")"
+    ]
+  }
+}
