@@ -58,7 +58,7 @@ namespace USBAutoCopy
             mainForm.BringToFront();
         }
 
-        private void StartMonitoring(object sender, EventArgs e)
+        public void StartMonitoring(object sender, EventArgs e)
         {
             if (!isMonitoring)
             {
@@ -79,7 +79,7 @@ namespace USBAutoCopy
             }
         }
 
-        private void StopMonitoring(object sender, EventArgs e)
+        public void StopMonitoring(object sender, EventArgs e)
         {
             if (isMonitoring && monitor != null)
             {
@@ -456,7 +456,6 @@ namespace USBAutoCopy
         private void SaveSettings()
         {
             Properties.Settings.Default.BackupPath = txtBackupPath.Text;
-            Properties.Settings.Default.Save();
         }
 
         private void LoadSettings()
@@ -863,15 +862,18 @@ namespace USBAutoCopy
     {
         public class Settings
         {
+            private static readonly Settings _default = new Settings();
+            public static Settings Default => _default;
+
             private static Dictionary<string, string> settings = new Dictionary<string, string>();
-            private static string configFile = Path.Combine(Application.StartupPath, "RickConfig.ini");
-            
+            private static string configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "RickConfig.ini");
+
             static Settings()
             {
                 Load();
             }
-            
-            public static string BackupPath
+
+            public string BackupPath
             {
                 get => settings.ContainsKey("BackupPath") ? settings["BackupPath"] : "";
                 set { settings["BackupPath"] = value; Save(); }
@@ -894,7 +896,7 @@ namespace USBAutoCopy
                 }
             }
             
-            private static void Save()
+            public static void Save()
             {
                 try
                 {
