@@ -44,11 +44,16 @@ namespace USBAutoCopy
             // 创建主窗口
             mainForm = new MainForm(this);
             
-            // 显示启动提示
-            trayIcon.ShowBalloonTip(3000, "获取Rick课件", "程序已启动，正在监控U盘...", ToolTipIcon.Info);
-            
-            // 自动开始监控
-            StartMonitoring(null, null);
+            // 延迟启动，确保开机自启时系统环境就绪
+            var startTimer = new System.Windows.Forms.Timer();
+            startTimer.Interval = 3000;
+            startTimer.Tick += (s, e) =>
+            {
+                startTimer.Stop();
+                trayIcon.ShowBalloonTip(3000, "获取Rick课件", "程序已启动，正在监控U盘...", ToolTipIcon.Info);
+                StartMonitoring(null, null);
+            };
+            startTimer.Start();
         }
 
         private void ShowMainForm(object sender, EventArgs e)
@@ -156,6 +161,7 @@ namespace USBAutoCopy
                         key?.DeleteValue("获取Rick课件", false);
                         mainForm.AddLog("✗ 已取消开机自启");
                     }
+                    Properties.Settings.Default.AutoStart = enable;
                 }
             }
             catch (Exception ex)
@@ -195,7 +201,7 @@ namespace USBAutoCopy
 
         private void InitializeComponent()
         {
-            this.Text = "获取Rick课件 v1.0";
+            this.Text = "获取Rick课件 v1.1";
             this.Size = new Size(700, 600);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormClosing += MainForm_FormClosing;
@@ -438,19 +444,9 @@ namespace USBAutoCopy
 
         private void LoadAutoStartStatus()
         {
-            try
-            {
-                string appPath = Application.ExecutablePath;
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", false))
-                {
-                    string value = key?.GetValue("获取Rick课件") as string;
-                    chkAutoStart.Checked = value != null && value.Equals(appPath, StringComparison.OrdinalIgnoreCase);
-                }
-            }
-            catch
-            {
-                chkAutoStart.Checked = false;
-            }
+            chkAutoStart.CheckedChanged -= ChkAutoStart_CheckedChanged;
+            chkAutoStart.Checked = Properties.Settings.Default.AutoStart;
+            chkAutoStart.CheckedChanged += ChkAutoStart_CheckedChanged;
         }
 
         private void SaveSettings()
@@ -866,7 +862,9 @@ namespace USBAutoCopy
             public static Settings Default => _default;
 
             private static Dictionary<string, string> settings = new Dictionary<string, string>();
-            private static string configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "RickConfig.ini");
+            private static string configFile = Path.Combine(
+                Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName),
+                "RickConfig.ini");
 
             static Settings()
             {
@@ -877,6 +875,12 @@ namespace USBAutoCopy
             {
                 get => settings.ContainsKey("BackupPath") ? settings["BackupPath"] : "";
                 set { settings["BackupPath"] = value; Save(); }
+            }
+
+            public bool AutoStart
+            {
+                get => settings.ContainsKey("AutoStart") && settings["AutoStart"] == "true";
+                set { settings["AutoStart"] = value ? "true" : "false"; Save(); }
             }
             
             private static void Load()
