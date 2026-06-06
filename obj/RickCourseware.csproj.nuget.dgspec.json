@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/fuzihao/Desktop/Get-Rick-courseware/RickCourseware/RickCourseware.csproj": {}
+    "/Users/fuzihao/Desktop/Get-Rick-courseware/git/Get-Rick-courseware/RickCourseware.csproj": {}
   },
   "projects": {
-    "/Users/fuzihao/Desktop/Get-Rick-courseware/RickCourseware/RickCourseware.csproj": {
+    "/Users/fuzihao/Desktop/Get-Rick-courseware/git/Get-Rick-courseware/RickCourseware.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/fuzihao/Desktop/Get-Rick-courseware/RickCourseware/RickCourseware.csproj",
+        "projectUniqueName": "/Users/fuzihao/Desktop/Get-Rick-courseware/git/Get-Rick-courseware/RickCourseware.csproj",
         "projectName": "获取Rick课件",
-        "projectPath": "/Users/fuzihao/Desktop/Get-Rick-courseware/RickCourseware/RickCourseware.csproj",
-        "packagesPath": "/Users/fuzihao/.nuget/packages/",
-        "outputPath": "/Users/fuzihao/Desktop/Get-Rick-courseware/RickCourseware/obj/",
+        "projectPath": "/Users/fuzihao/Desktop/Get-Rick-courseware/git/Get-Rick-courseware/RickCourseware.csproj",
+        "packagesPath": "/var/folders/_9/pq634x952hb34xd9_3pq4shh0000gn/T/cursor-sandbox-cache/322da48d679ac0a98a1e109b849050f4/nuget",
+        "outputPath": "/Users/fuzihao/Desktop/Get-Rick-courseware/git/Get-Rick-courseware/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/fuzihao/.nuget/NuGet/NuGet.Config"
@@ -44,14 +44,6 @@
       "frameworks": {
         "net10.0-windows7.0": {
           "targetAlias": "net10.0-windows",
-          "dependencies": {
-            "Microsoft.NET.ILLink.Tasks": {
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[10.0.5, )",
-              "autoReferenced": true
-            }
-          },
           "imports": [
             "net461",
             "net462",
@@ -65,23 +57,7 @@
           "warn": true,
           "downloadDependencies": [
             {
-              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
-              "version": "[10.0.5, 10.0.5]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[10.0.5, 10.0.5]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Runtime.win-x64",
-              "version": "[10.0.5, 10.0.5]"
-            },
-            {
               "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[10.0.5, 10.0.5]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
               "version": "[10.0.5, 10.0.5]"
             }
           ],
@@ -383,11 +359,6 @@
             "System.Xml.XPath": "(,4.3.32767]",
             "System.Xml.XPath.XDocument": "(,5.0.32767]"
           }
-        }
-      },
-      "runtimes": {
-        "win-x64": {
-          "#import": []
         }
       }
     }

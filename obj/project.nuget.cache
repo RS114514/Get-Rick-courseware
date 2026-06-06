@@ -1,15 +1,26 @@
 {
   "version": 2,
-  "dgSpecHash": "S+vMixZF/Uk=",
-  "success": true,
-  "projectFilePath": "/Users/fuzihao/Desktop/Get-Rick-courseware/RickCourseware/RickCourseware.csproj",
-  "expectedPackageFiles": [
-    "/Users/fuzihao/.nuget/packages/microsoft.net.illink.tasks/10.0.5/microsoft.net.illink.tasks.10.0.5.nupkg.sha512",
-    "/Users/fuzihao/.nuget/packages/microsoft.netcore.app.runtime.win-x64/10.0.5/microsoft.netcore.app.runtime.win-x64.10.0.5.nupkg.sha512",
-    "/Users/fuzihao/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.5/microsoft.windowsdesktop.app.ref.10.0.5.nupkg.sha512",
-    "/Users/fuzihao/.nuget/packages/microsoft.windowsdesktop.app.runtime.win-x64/10.0.5/microsoft.windowsdesktop.app.runtime.win-x64.10.0.5.nupkg.sha512",
-    "/Users/fuzihao/.nuget/packages/microsoft.aspnetcore.app.runtime.win-x64/10.0.5/microsoft.aspnetcore.app.runtime.win-x64.10.0.5.nupkg.sha512",
-    "/Users/fuzihao/.nuget/packages/microsoft.netcore.app.host.win-x64/10.0.5/microsoft.netcore.app.host.win-x64.10.0.5.nupkg.sha512"
-  ],
-  "logs": []
+  "dgSpecHash": "2ktRZV7Olr4=",
+  "success": false,
+  "projectFilePath": "/Users/fuzihao/Desktop/Get-Rick-courseware/git/Get-Rick-courseware/RickCourseware.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1301",
+      "level": "Error",
+      "message": "Unable to load the service index for source https://api.nuget.org/v3/index.json.\n  Permission denied (127.0.0.1:58945)\n  Permission denied",
+      "projectPath": "/Users/fuzihao/Desktop/Get-Rick-courseware/git/Get-Rick-courseware/RickCourseware.csproj",
+      "filePath": "/Users/fuzihao/Desktop/Get-Rick-courseware/git/Get-Rick-courseware/RickCourseware.csproj",
+      "targetGraphs": []
+    },
+    {
+      "code": "NU1900",
+      "level": "Warning",
+      "message": "Error occurred while getting package vulnerability data: Unable to load the service index for source https://api.nuget.org/v3/index.json.",
+      "projectPath": "/Users/fuzihao/Desktop/Get-Rick-courseware/git/Get-Rick-courseware/RickCourseware.csproj",
+      "warningLevel": 1,
+      "filePath": "/Users/fuzihao/Desktop/Get-Rick-courseware/git/Get-Rick-courseware/RickCourseware.csproj",
+      "targetGraphs": []
+    }
+  ]
 }
