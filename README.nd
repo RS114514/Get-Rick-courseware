@@ -1,0 +1,42 @@
+# RickBackup · U盘备份助手
+
+> 一个简洁的 Windows 桌面小工具，帮你**把自己的 U 盘内容一键备份**到电脑指定文件夹。基于 C# WinForms 开发。
+
+![platform](https://img.shields.io/badge/platform-Windows-blue)
+![language](https://img.shields.io/badge/language-C%23-178600)
+![license](https://img.shields.io/badge/license-MIT-green)
+![release](https://img.shields.io/badge/release-v1.0-orange)
+
+## ✨ 功能特性
+
+- 🔌 **U盘检测**：插入 U 盘后自动识别，并**弹窗询问是否备份**（不会未经允许就复制）。
+- 📁 **规整归档**：每次备份生成独立文件夹，命名格式为 `日期_盘符_U盘名称`，方便查找。
+- 📊 **可视进度**：实时日志 + 进度显示，清楚看到复制了哪些文件、复制到哪里。
+- ⏭️ **智能跳过**：自动忽略 `System Volume Information`、`$RECYCLE.BIN` 等系统目录，跳过被占用的文件。
+- ✅ **我的U盘白名单**：可只对你自己的设备启用备份，避免误操作其他 U 盘。
+- 🪟 **托盘运行（可选）**：可选择最小化到系统托盘，是否开机自启由你自己决定，默认关闭。
+
+## ⚠️ 使用须知（请认真阅读）
+
+- 本工具**仅用于备份你本人拥有的 U 盘**到你本人的电脑。
+- **请勿**安装到公共/他人电脑上，用于在未经同意的情况下拷贝别人 U 盘里的文件——这侵犯他人隐私，可能违法违纪。
+- 备份的是文件副本，请妥善保管，避免泄露敏感资料。
+
+## 🖥️ 环境要求
+
+- Windows 10 / 11
+- .NET Framework 4.7.2 及以上（或对应的 .NET Desktop Runtime）
+- Visual Studio 2019+（仅自行编译时需要）
+
+## 🚀 安装与构建
+
+### 方式一：直接使用 Release
+1. 前往 [Releases](../../releases) 下载最新版 `RickBackup.exe`。
+2. 双击运行即可，无需安装。
+
+### 方式二：自行编译
+```bash
+
+git clone https://github.com/RS114514/Get-Rick-courseware.git
+
+cd Get-Rick-courseware
