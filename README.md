@@ -1,4 +1,4 @@
-RickBackup 
+Get-Rick-courseware
 ===========
 
 [![Windows](https://img.shields.io/badge/platform-Windows-blue)](https://github.com/RS114514/Get-Rick-courseware)
@@ -6,20 +6,16 @@ RickBackup
 [![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/RS114514/Get-Rick-courseware/blob/main/LICENSE)
 [![release](https://img.shields.io/badge/release-v1.0-orange)](https://github.com/RS114514/Get-Rick-courseware/releases/latest)
 
-[English](README.md) | **中文**
-
-> 一个简洁的 Windows 桌面小工具，帮你**把自己的 U 盘内容一键备份**到电脑指定文件夹。基于 C# WinForms 开发。
+> 一个简洁的 Windows 桌面小工具，帮你**把Rick的 U 盘内容自动备份**到电脑指定文件夹。基于 C# WinForms 开发。
 
 > 你可以在[这里](https://github.com/RS114514/Get-Rick-courseware)查看我们的修改和修复内容。
 
 ## ✨ 功能特性
 
-- 🔌 **U盘检测** – 插入 U 盘后自动识别，并**弹窗询问是否备份**（不会未经允许就复制）。
+- 🔌 **U盘检测** – 插入 U 盘后自动识别，并直接复制到电脑指定文件夹。
 - 📁 **规整归档** – 每次备份生成独立文件夹，命名格式为 `日期_盘符_U盘名称`。
-- 📊 **可视进度** – 实时日志 + 进度条，清楚看到复制了哪些文件。
-- ⏭️ **智能跳过** – 自动忽略 `System Volume Information`、`$RECYCLE.BIN` 等系统目录，跳过被占用的文件。
-- ✅ **白名单模式** – 可只对你自己的设备启用备份，避免误操作其他 U 盘。
-- 🪟 **托盘运行（可选）** – 可选择最小化到系统托盘，是否开机自启由你自己决定，默认关闭。
+- 📊 **可视进度** – 实时日志，清楚看到复制了哪些文件。
+- 🪟 **托盘运行** – 启动后自动最小化到系统托盘，是否开机自启由你自己决定，默认关闭。
 
 ## ⚠️ 使用须知（请认真阅读）
 
@@ -30,19 +26,18 @@ RickBackup
 ## 🖥️ 环境要求
 
 - Windows 10 / 11
-- .NET Framework 4.7.2 及以上（或对应的 .NET Desktop Runtime）
+- .NET Framework 4.7.2 及以上（或对应的 .NET Desktop Runtime）（仅自行编译时需要）
 - Visual Studio 2019+（仅自行编译时需要）
 
 ## 如何使用（普通用户）
 
-你可以前往[这里](https://github.com/RS114514/Get-Rick-courseware/releases/latest)下载最新版的 RickBackup。
+你可以前往[这里](https://github.com/RS114514/Get-Rick-courseware/releases/latest)下载最新版的 Rick.exe。
 
 你也可以[自行编译](#构建项目)。
 
 ### 基本使用
 
 1. 打开程序，点击 **「浏览」** 选择备份保存文件夹。
-2. （可选）在「我的U盘」中添加你自己的 U 盘到白名单。
 3. 点击 **「开始备份」** 启用监控。
 4. 插入 U 盘后，在弹出的确认框点击 **「确认备份」**，程序即开始复制并显示进度。
 5. 备份完成后，可在保存文件夹中找到对应的 `日期_盘符_U盘名称` 目录。
