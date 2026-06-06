@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Management;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
@@ -22,7 +23,7 @@ namespace USBAutoCopy
             // 初始化托盘图标
             trayIcon = new NotifyIcon()
             {
-                Icon = SystemIcons.Information,
+                Icon = LoadAppIcon(),
                 Visible = true
             };
 
@@ -54,6 +55,19 @@ namespace USBAutoCopy
                 StartMonitoring(null, null);
             };
             startTimer.Start();
+        }
+
+        public static Icon LoadAppIcon()
+        {
+            try
+            {
+                string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+                return Icon.ExtractAssociatedIcon(exePath);
+            }
+            catch
+            {
+                return SystemIcons.Shield;
+            }
         }
 
         private void ShowMainForm(object sender, EventArgs e)
@@ -190,6 +204,10 @@ namespace USBAutoCopy
         private Label lblDriveInfo;
         private CheckBox chkAutoStart;
         private Button btnClearLog;
+        private ComboBox cmbDrives;
+        private Button btnBlockDrive, btnManageBlock;
+        private System.Windows.Forms.Timer driveRefreshTimer;
+        private Dictionary<string, string> _driveMap = new Dictionary<string, string>(); // 显示文本 -> 唯一标识
 
         public MainForm(USBAutoCopy context)
         {
@@ -201,11 +219,11 @@ namespace USBAutoCopy
 
         private void InitializeComponent()
         {
-            this.Text = "获取Rick课件 v1.1";
-            this.Size = new Size(700, 600);
+            this.Text = "获取Rick课件 v2.0";
+            this.Size = new Size(700, 660);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormClosing += MainForm_FormClosing;
-            this.Icon = SystemIcons.Information;
+            this.Icon = USBAutoCopy.LoadAppIcon();
 
             Label lblPath = new Label() 
             { 
@@ -278,11 +296,48 @@ namespace USBAutoCopy
                 ForeColor = Color.Red, 
                 Font = new Font("微软雅黑", 9, FontStyle.Bold) 
             };
-            
+
+            // U盘选择行
+            Label lblDriveSelect = new Label()
+            {
+                Text = "当前U盘:",
+                Location = new Point(20, 140),
+                Size = new Size(70, 25),
+                Font = new Font("微软雅黑", 9, FontStyle.Bold)
+            };
+
+            cmbDrives = new ComboBox()
+            {
+                Location = new Point(95, 138),
+                Size = new Size(320, 25),
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new Font("微软雅黑", 9)
+            };
+
+            btnBlockDrive = new Button()
+            {
+                Text = "屏蔽此U盘",
+                Location = new Point(425, 137),
+                Size = new Size(100, 28),
+                BackColor = Color.Orange,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnBlockDrive.Click += BtnBlockDrive_Click;
+
+            btnManageBlock = new Button()
+            {
+                Text = "屏蔽管理",
+                Location = new Point(535, 137),
+                Size = new Size(100, 28),
+                BackColor = Color.LightGray,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnManageBlock.Click += BtnManageBlock_Click;
+
             Label lblLog = new Label() 
             { 
                 Text = "运行日志:", 
-                Location = new Point(20, 140), 
+                Location = new Point(20, 178), 
                 Size = new Size(80, 25), 
                 Font = new Font("微软雅黑", 10, FontStyle.Bold) 
             };
@@ -290,7 +345,7 @@ namespace USBAutoCopy
             btnClearLog = new Button()
             {
                 Text = "清空日志",
-                Location = new Point(580, 138),
+                Location = new Point(580, 176),
                 Size = new Size(80, 25),
                 BackColor = Color.LightGray
             };
@@ -298,8 +353,8 @@ namespace USBAutoCopy
             
             lstLog = new ListBox() 
             { 
-                Location = new Point(20, 170), 
-                Size = new Size(640, 350), 
+                Location = new Point(20, 208), 
+                Size = new Size(640, 380), 
                 Font = new Font("Consolas", 9),
                 BackColor = Color.Black,
                 ForeColor = Color.LightGreen
@@ -307,7 +362,7 @@ namespace USBAutoCopy
             
             progressBar = new ProgressBar() 
             { 
-                Location = new Point(20, 530), 
+                Location = new Point(20, 598), 
                 Size = new Size(640, 20), 
                 Style = ProgressBarStyle.Marquee, 
                 Visible = false 
@@ -315,7 +370,8 @@ namespace USBAutoCopy
 
             this.Controls.AddRange(new Control[] { 
                 lblPath, txtBackupPath, btnBrowse, lblDriveInfo, 
-                chkAutoStart, btnStart, btnStop, lblStatus, 
+                chkAutoStart, btnStart, btnStop, lblStatus,
+                lblDriveSelect, cmbDrives, btnBlockDrive, btnManageBlock,
                 lblLog, btnClearLog, lstLog, progressBar 
             });
 
@@ -324,6 +380,13 @@ namespace USBAutoCopy
             {
                 txtBackupPath.Text = savedPath;
             }
+
+            // 定时刷新 U 盘列表
+            driveRefreshTimer = new System.Windows.Forms.Timer();
+            driveRefreshTimer.Interval = 2000;
+            driveRefreshTimer.Tick += (s, e) => RefreshDriveList();
+            driveRefreshTimer.Start();
+            RefreshDriveList();
         }
 
         private void BtnBrowse_Click(object sender, EventArgs e)
@@ -377,6 +440,80 @@ namespace USBAutoCopy
             AddLog("日志已清空");
         }
 
+        private void RefreshDriveList()
+        {
+            var blocked = Properties.Settings.Default.GetBlockedList();
+            _driveMap.Clear();
+
+            try
+            {
+                foreach (DriveInfo d in DriveInfo.GetDrives())
+                {
+                    if (d.DriveType == DriveType.Removable && d.IsReady)
+                    {
+                        string drivePath = d.Name.TrimEnd('\\');
+                        string label = string.IsNullOrEmpty(d.VolumeLabel) ? "未命名U盘" : d.VolumeLabel;
+                        string uniqueId = USBMonitor.GetDriveUniqueId(drivePath);
+                        bool isBlocked = blocked.Contains(uniqueId);
+                        string display = isBlocked ? $"{drivePath} - {label} [已屏蔽]" : $"{drivePath} - {label}";
+                        _driveMap[display] = uniqueId;
+                    }
+                }
+            }
+            catch { }
+
+            string selected = cmbDrives.SelectedItem as string;
+            cmbDrives.Items.Clear();
+            if (_driveMap.Count == 0)
+            {
+                cmbDrives.Items.Add("（无可移动设备）");
+            }
+            else
+            {
+                foreach (var key in _driveMap.Keys) cmbDrives.Items.Add(key);
+            }
+
+            if (selected != null && cmbDrives.Items.Contains(selected))
+                cmbDrives.SelectedItem = selected;
+            else if (cmbDrives.Items.Count > 0)
+                cmbDrives.SelectedIndex = 0;
+        }
+
+        private void BtnBlockDrive_Click(object sender, EventArgs e)
+        {
+            string display = cmbDrives.SelectedItem as string;
+            if (display == null || display == "（无可移动设备）") return;
+
+            if (!_driveMap.TryGetValue(display, out string uniqueId)) return;
+
+            // 提取友好显示名（去掉 [已屏蔽]）
+            string friendlyName = display.Replace(" [已屏蔽]", "").Trim();
+
+            var blocked = Properties.Settings.Default.GetBlockedList();
+            if (blocked.Contains(uniqueId))
+            {
+                MessageBox.Show($"「{friendlyName}」已在屏蔽列表中。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (MessageBox.Show($"确定要屏蔽「{friendlyName}」吗？插入后将不再自动复制。",
+                "确认屏蔽", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                Properties.Settings.Default.AddBlocked(uniqueId);
+                AddLog($"🚫 已屏蔽 U 盘: {friendlyName}");
+                RefreshDriveList();
+            }
+        }
+
+        private void BtnManageBlock_Click(object sender, EventArgs e)
+        {
+            using (var form = new BlocklistForm())
+            {
+                form.ShowDialog(this);
+                RefreshDriveList();
+            }
+        }
+
         private void ChkAutoStart_CheckedChanged(object sender, EventArgs e)
         {
             var method = appContext.GetType().GetMethod("SetAutoStart", 
@@ -401,9 +538,20 @@ namespace USBAutoCopy
             }
 
             string time = DateTime.Now.ToString("HH:mm:ss");
-            lstLog.Items.Insert(0, $"[{time}] {message}");
+            string entry = $"[{time}] {message}";
+            lstLog.Items.Insert(0, entry);
             if (lstLog.Items.Count > 500)
                 lstLog.Items.RemoveAt(lstLog.Items.Count - 1);
+
+            try
+            {
+                string exeDir = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+                string logsDir = Path.Combine(exeDir, "logs");
+                Directory.CreateDirectory(logsDir);
+                string logFile = Path.Combine(logsDir, $"{DateTime.Now:yyyyMMdd}.log");
+                File.AppendAllText(logFile, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
+            }
+            catch { }
         }
 
         public void SetMonitoringStatus(bool isMonitoring)
@@ -468,6 +616,89 @@ namespace USBAutoCopy
                 this.Hide();
                 AddLog("程序已最小化到托盘，双击图标可重新打开");
             }
+        }
+    }
+
+    public class BlocklistForm : Form
+    {
+        private ListBox lstBlocked;
+        private Button btnRemove, btnClose;
+
+        public BlocklistForm()
+        {
+            this.Text = "屏蔽管理";
+            this.Size = new Size(400, 340);
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+
+            Label lbl = new Label()
+            {
+                Text = "已屏蔽的 U 盘（选中后可解除屏蔽）:",
+                Location = new Point(15, 15),
+                Size = new Size(360, 20),
+                Font = new Font("微软雅黑", 9)
+            };
+
+            lstBlocked = new ListBox()
+            {
+                Location = new Point(15, 40),
+                Size = new Size(355, 200),
+                Font = new Font("微软雅黑", 9)
+            };
+
+            btnRemove = new Button()
+            {
+                Text = "解除屏蔽",
+                Location = new Point(15, 255),
+                Size = new Size(110, 32),
+                BackColor = Color.LightGreen,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnRemove.Click += BtnRemove_Click;
+
+            btnClose = new Button()
+            {
+                Text = "关闭",
+                Location = new Point(260, 255),
+                Size = new Size(110, 32),
+                BackColor = Color.LightGray,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnClose.Click += (s, e) => this.Close();
+
+            this.Controls.AddRange(new Control[] { lbl, lstBlocked, btnRemove, btnClose });
+            RefreshList();
+        }
+
+        private void RefreshList()
+        {
+            lstBlocked.Items.Clear();
+            foreach (var item in Properties.Settings.Default.GetBlockedList())
+            {
+                // 显示卷标部分（| 前），序列号作为内部标识
+                string display = item.Contains("|") ? item.Split('|')[0] + $"（序列号: {item.Split('|')[1]}）" : item;
+                lstBlocked.Items.Add(new BlocklistItem(display, item));
+            }
+            if (lstBlocked.Items.Count == 0)
+                lstBlocked.Items.Add(new BlocklistItem("（暂无屏蔽记录）", null));
+        }
+
+        private void BtnRemove_Click(object sender, EventArgs e)
+        {
+            var selected = lstBlocked.SelectedItem as BlocklistItem;
+            if (selected == null || selected.UniqueId == null) return;
+
+            Properties.Settings.Default.RemoveBlocked(selected.UniqueId);
+            RefreshList();
+        }
+
+        private class BlocklistItem
+        {
+            public string Display { get; }
+            public string UniqueId { get; }
+            public BlocklistItem(string display, string uniqueId) { Display = display; UniqueId = uniqueId; }
+            public override string ToString() => Display;
         }
     }
 
@@ -632,6 +863,39 @@ namespace USBAutoCopy
             }
         }
 
+        public static string GetVolumeSerial(string driveLetter)
+        {
+            try
+            {
+                string drive = driveLetter.TrimEnd('\\', '/');
+                if (!drive.EndsWith(":")) drive += ":";
+                using (var searcher = new ManagementObjectSearcher(
+                    $"SELECT VolumeSerialNumber FROM Win32_LogicalDisk WHERE DeviceID='{drive}'"))
+                {
+                    foreach (ManagementObject obj in searcher.Get())
+                    {
+                        string serial = obj["VolumeSerialNumber"]?.ToString();
+                        if (!string.IsNullOrEmpty(serial)) return serial;
+                    }
+                }
+            }
+            catch { }
+            return "";
+        }
+
+        public static string GetDriveUniqueId(string driveLetter)
+        {
+            try
+            {
+                string clean = driveLetter.TrimEnd('\\', '/');
+                DriveInfo di = new DriveInfo(clean.EndsWith(":") ? clean : clean + ":");
+                string label = string.IsNullOrEmpty(di.VolumeLabel) ? "未命名U盘" : di.VolumeLabel;
+                string serial = GetVolumeSerial(driveLetter);
+                return string.IsNullOrEmpty(serial) ? label : $"{label}|{serial}";
+            }
+            catch { return "未知U盘"; }
+        }
+
         private string SanitizeFolderName(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -683,6 +947,17 @@ namespace USBAutoCopy
                 // 获取U盘信息
                 string usbName = GetUSBName(cleanDrive);
                 string driveLetterOnly = cleanDrive.TrimEnd('\\');
+                string uniqueId = USBMonitor.GetDriveUniqueId(cleanDrive);
+
+                // 检查屏蔽列表
+                var blocked = Properties.Settings.Default.GetBlockedList();
+                if (blocked.Contains(uniqueId) || blocked.Contains(driveLetterOnly))
+                {
+                    logCallback?.Invoke($"🚫 U盘已屏蔽，跳过: {driveLetterOnly} ({usbName})");
+                    lock (processedDevicesLock) { processedDevices.Add(driveLetter); }
+                    return;
+                }
+
                 string sanitizedUSBName = SanitizeFolderName(usbName);
                 
                 // 创建文件夹名
@@ -882,6 +1157,32 @@ namespace USBAutoCopy
                 get => settings.ContainsKey("AutoStart") && settings["AutoStart"] == "true";
                 set { settings["AutoStart"] = value ? "true" : "false"; Save(); }
             }
+
+            public string BlockedDrives
+            {
+                get => settings.ContainsKey("BlockedDrives") ? settings["BlockedDrives"] : "";
+                set { settings["BlockedDrives"] = value; Save(); }
+            }
+
+            public List<string> GetBlockedList()
+            {
+                var raw = BlockedDrives;
+                if (string.IsNullOrEmpty(raw)) return new List<string>();
+                return new List<string>(raw.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+            }
+
+            public void AddBlocked(string name)
+            {
+                var list = GetBlockedList();
+                if (!list.Contains(name)) { list.Add(name); BlockedDrives = string.Join(",", list); }
+            }
+
+            public void RemoveBlocked(string name)
+            {
+                var list = GetBlockedList();
+                list.Remove(name);
+                BlockedDrives = string.Join(",", list);
+            }
             
             private static void Load()
             {
@@ -919,9 +1220,17 @@ namespace USBAutoCopy
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new USBAutoCopy());
+            using (var mutex = new System.Threading.Mutex(true, "获取Rick课件_SingleInstance", out bool createdNew))
+            {
+                if (!createdNew)
+                {
+                    MessageBox.Show("程序已在运行中！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new USBAutoCopy());
+            }
         }
     }
 }
