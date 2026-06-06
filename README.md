@@ -1,4 +1,4 @@
-Get-Rick-courseware
+获取 Rick课件（Get-Rick-Courseware）
 ===========
 
 [![Windows](https://img.shields.io/badge/platform-Windows-blue)](https://github.com/RS114514/Get-Rick-courseware)
@@ -38,8 +38,8 @@ Get-Rick-courseware
 ### 基本使用
 
 1. 打开程序，点击 **「浏览」** 选择备份保存文件夹。
-3. 点击 **「开始备份」** 启用监控。
-4. 插入 U 盘后，在弹出的确认框点击 **「确认备份」**，程序即开始复制并显示进度。
+3. 点击 **「」** 启用监控。
+4. 插入 U 盘后，程序即开始复制并在主界面显示进度。
 5. 备份完成后，可在保存文件夹中找到对应的 `日期_盘符_U盘名称` 目录。
 
 | 配置项 | 说明 | 默认 |
