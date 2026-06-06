@@ -9,6 +9,12 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <AssemblyName>获取Rick课件</AssemblyName>
     <RootNamespace>USBAutoCopy</RootNamespace>
+    <Version>1.1.0</Version>
+    <FileVersion>1.1.0.0</FileVersion>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <Product>获取Rick课件</Product>
+    <Company>RS基金会</Company>
+    <Copyright>Copyright © 2025 RS114514</Copyright>
   </PropertyGroup>
 
 </Project>
