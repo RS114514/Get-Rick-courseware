@@ -63,15 +63,17 @@
 
 ---
 
-## 一键构建项目
+## 构建项目
+
+### 方法一：双端一键构建脚本 (推荐)
 
 我们在项目中提供了非常方便的一键构建脚本，供您本地直接编译双端程序。
 
-### 💻 构建 Windows 版本
+#### 💻 构建 Windows 版本 (自包含运行时)
 在 Windows 系统下，双击根目录下的 **`build-win.bat`** 即可自动开始编译。
 - 编译生成的文件将输出在 `./publish-win/Rick.exe`，该文件已整合 .NET 运行时，可发给其他电脑免安装直接启动。
 
-### 🍏 构建 macOS 版本
+#### 🍏 构建 macOS 版本 (.app 软件)
 在 macOS 系统终端下，进入 `mac/` 文件夹并执行 **`build-app.sh`**：
 ```bash
 cd mac
@@ -79,6 +81,27 @@ chmod +x build-app.sh
 ./build-app.sh
 ```
 - 编译生成的成品将输出在 `./mac/获取Rick课件.app`，已经自带图标和 macOS 架构配置，可直接拖入 `/Applications` 中使用。
+
+### 方法二：Windows 原生 dotnet CLI 命令行 (自定参数)
+
+```bash
+# 还原依赖
+dotnet restore
+
+# 编译
+dotnet build --configuration Release
+
+# 发布单文件可执行程序 (依赖目标机装有 .NET 运行时)
+dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true
+```
+
+### 方法三：Windows Visual Studio 2022 编译
+
+1. 用 Visual Studio 打开 `RickCourseware.csproj`
+2. 顶部菜单选择 **Release** 配置
+3. 点击 **生成 > 生成解决方案**（Ctrl+Shift+B）
+
+编译产物位于 `bin/Release/net10.0-windows/` 目录。
 
 ---
 
