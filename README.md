@@ -41,7 +41,7 @@
 - 自行编译：需要安装 .NET 10 SDK。
 
 ### macOS 平台
-- macOS 10.15 及以上（Intel / Apple Silicon 芯片）
+- macOS 11.0 及以上（仅支持 Apple Silicon M系列芯片 / ARM64 架构）
 - 运行预编译免安装版（自包含）：解压后直接双击 `.app` 运行。
 - 自行编译：需要安装 .NET 10 SDK。
 
