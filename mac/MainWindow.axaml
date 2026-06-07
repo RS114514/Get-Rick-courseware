@@ -1,0 +1,50 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="USBAutoCopy.MainWindow"
+        Title="获取Rick课件 v2.5" Width="700" Height="680"
+        WindowStartupLocation="CenterScreen">
+    
+    <Grid Margin="20" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto">
+        <!-- Row 0: Save Path -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,10">
+            <Label Grid.Column="0" Content="课件保存文件夹:" VerticalAlignment="Center" FontWeight="Bold" FontSize="14" Margin="0,0,10,0"/>
+            <TextBox Grid.Column="1" Name="TxtBackupPath" IsReadOnly="True" VerticalAlignment="Center"/>
+            <Button Grid.Column="2" Name="BtnBrowse" Content="浏览" Margin="10,0,0,0" Width="80" HorizontalContentAlignment="Center" Click="BtnBrowse_Click"/>
+        </Grid>
+
+        <!-- Row 1: Prompt -->
+        <TextBlock Grid.Row="1" Text="💡 提示：插入U盘后会自动复制，文件夹格式：日期_盘符_U盘名称" Foreground="Blue" FontSize="12" Margin="0,0,0,15"/>
+
+        <!-- Row 2: Controls and Status -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="15" Margin="0,0,0,15" VerticalAlignment="Center">
+            <CheckBox Name="ChkAutoStart" Content="开机自动启动" Click="ChkAutoStart_Click"/>
+            <Button Name="BtnStart" Content="启动监控" Background="LightGreen" Foreground="Black" Width="100" HorizontalContentAlignment="Center" Click="BtnStart_Click"/>
+            <Button Name="BtnStop" Content="停止监控" Background="LightCoral" Foreground="Black" Width="100" HorizontalContentAlignment="Center" IsEnabled="False" Click="BtnStop_Click"/>
+            <TextBlock Name="TxtStatus" Text="状态: 未监控 ✗" Foreground="Red" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+        </StackPanel>
+
+        <!-- Row 3: USB Selection and Block -->
+        <Grid Grid.Row="3" ColumnDefinitions="Auto,*,Auto,Auto" Margin="0,0,0,15">
+            <Label Grid.Column="0" Content="当前U盘:" VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,10,0"/>
+            <ComboBox Grid.Column="1" Name="CmbDrives" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                <!-- Dynamically populated -->
+            </ComboBox>
+            <Button Grid.Column="2" Name="BtnBlockDrive" Content="屏蔽此U盘" Background="Orange" Foreground="Black" Margin="10,0,0,0" Width="100" HorizontalContentAlignment="Center" Click="BtnBlockDrive_Click"/>
+            <Button Grid.Column="3" Name="BtnManageBlock" Content="屏蔽管理" Background="LightGray" Foreground="Black" Margin="10,0,0,0" Width="100" HorizontalContentAlignment="Center" Click="BtnManageBlock_Click"/>
+        </Grid>
+
+        <!-- Row 4: Log Header -->
+        <Grid Grid.Row="4" ColumnDefinitions="*,Auto" Margin="0,0,0,5">
+            <Label Grid.Column="0" Content="运行日志:" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
+            <Button Grid.Column="1" Name="BtnClearLog" Content="清空日志" Width="80" HorizontalContentAlignment="Center" Click="BtnClearLog_Click"/>
+        </Grid>
+
+        <!-- Row 5: Logs -->
+        <ListBox Grid.Row="5" Name="LstLog" Background="Black" Foreground="LightGreen" FontFamily="Consolas, Courier New, monospace" FontSize="12" Margin="0,0,0,10">
+            <!-- Dynamically populated -->
+        </ListBox>
+
+        <!-- Row 6: Progress Bar -->
+        <ProgressBar Grid.Row="6" Name="ProgBar" IsIndeterminate="True" Height="20" IsVisible="False"/>
+    </Grid>
+</Window>

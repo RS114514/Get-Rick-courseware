@@ -3,3 +3,7 @@ bin/
 obj/
 *.user
 .DS_Store
+publish-win/
+mac/publish-mac/
+*.app/
+*.exe

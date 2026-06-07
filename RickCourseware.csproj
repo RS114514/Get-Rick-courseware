@@ -1,25 +1,35 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
-    <Nullable>disable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <EnableWindowsTargeting>true</EnableWindowsTargeting>
-    <AssemblyName>获取Rick课件</AssemblyName>
-    <RootNamespace>USBAutoCopy</RootNamespace>
-    <Version>2.0.0</Version>
-    <FileVersion>2.0.0.0</FileVersion>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <Product>获取Rick课件</Product>
-    <Company>RS基金会</Company>
-    <Copyright>Copyright © 2025 RS114514</Copyright>
-    <ApplicationIcon>app.ico</ApplicationIcon>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Management" Version="9.0.0" />
-  </ItemGroup>
-
-</Project>
+<Project Sdk="Microsoft.NET.Sdk">
+ 
+   <PropertyGroup>
+     <OutputType>WinExe</OutputType>
+     <TargetFramework>net10.0-windows</TargetFramework>
+     <Nullable>disable</Nullable>
+     <UseWindowsForms>true</UseWindowsForms>
+     <ImplicitUsings>disable</ImplicitUsings>
+     <EnableWindowsTargeting>true</EnableWindowsTargeting>
+     <AssemblyName>获取Rick课件</AssemblyName>
+     <RootNamespace>USBAutoCopy</RootNamespace>
+     <Version>2.5.0</Version>
+     <FileVersion>2.5.0.0</FileVersion>
+     <AssemblyVersion>2.5.0.0</AssemblyVersion>
+     <Product>获取Rick课件</Product>
+     <Company>RS基金会</Company>
+     <Copyright>Copyright © 2025 RS114514</Copyright>
+     <ApplicationIcon>app.ico</ApplicationIcon>
+     <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
+   </PropertyGroup>
+ 
+   <ItemGroup>
+     <PackageReference Include="System.Management" Version="9.0.0" />
+   </ItemGroup>
+ 
+   <ItemGroup>
+     <Compile Remove="RickCourseware.Tests\**" />
+     <EmbeddedResource Remove="RickCourseware.Tests\**" />
+     <None Remove="RickCourseware.Tests\**" />
+     <Compile Remove="mac\**" />
+     <EmbeddedResource Remove="mac\**" />
+     <None Remove="mac\**" />
+   </ItemGroup>
+ 
+ </Project>

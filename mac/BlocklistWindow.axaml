@@ -1,0 +1,23 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="USBAutoCopy.BlocklistWindow"
+        Title="屏蔽管理" Width="400" Height="340"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+    
+    <Grid Margin="15" RowDefinitions="Auto,*,Auto">
+        <!-- Row 0: Header Label -->
+        <Label Grid.Row="0" Content="已屏蔽的 U 盘（选中后可解除屏蔽）:" Margin="0,0,0,10" FontWeight="Bold"/>
+
+        <!-- Row 1: ListBox -->
+        <ListBox Grid.Row="1" Name="LstBlocked" Margin="0,0,0,15">
+            <!-- Populated dynamically -->
+        </ListBox>
+
+        <!-- Row 2: Buttons -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,*">
+            <Button Grid.Column="0" Name="BtnRemove" Content="解除屏蔽" Background="LightGreen" Foreground="Black" Width="110" HorizontalContentAlignment="Center" Click="BtnRemove_Click"/>
+            <Button Grid.Column="1" Name="BtnClose" Content="关闭" Background="LightGray" Foreground="Black" Width="110" HorizontalContentAlignment="Center" Click="BtnClose_Click" HorizontalAlignment="Right"/>
+        </Grid>
+    </Grid>
+</Window>
