@@ -7,3 +7,4 @@ publish-win/
 mac/publish-mac/
 *.app/
 *.exe
+*.zip
