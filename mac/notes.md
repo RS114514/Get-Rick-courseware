@@ -1,7 +1,7 @@
 # 📦 更新日志
 
 ## 👇 快速下载 / Downloads
-* **🍏 macOS 苹果版**：下载下方 Assets 列表中的 **`Rick.zip`**，解压后即可直接运行。
+* **🍏 macOS 苹果版**：下载下方 Assets 列表中的 **`Rick-macOS.zip`**，解压后即可直接运行。
 * **💻 Windows 电脑版**：下载下方 Assets 列表中的 **`Rick.exe`**，自包含运行时，免安装双击直接启动。
 
 ---
